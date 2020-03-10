@@ -1,0 +1,6 @@
+.DS_Store
+wwwroot/**/*.js
+wwwroot/**/*.css
+wwwroot/fonts/*.*
+node_modules
+appsettings.json
