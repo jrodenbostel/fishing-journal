@@ -1,0 +1,50 @@
+@using FishingJournal.Models
+@using Microsoft.AspNetCore.Identity
+@model FishingJournal.Models.ViewModels.LoginViewModel
+@inject SignInManager<User> SignInManager
+@{
+    ViewData["Title"] = "Log in";
+    Layout = "_Layout";
+}
+<div class="container">
+    <div class="column is-half">
+        <section>
+            <form asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+                <h4 class="title is-4">Use a local account to log in.</h4>
+                <hr/>
+                <div asp-validation-summary="All" class="has-text-danger"></div>
+                <div class="field">
+                    <label class="label" asp-for="Email"></label>
+                    <div class="control">
+                        <input asp-for="Email" class="input">
+                    </div>
+                    <span asp-validation-for="Email" class="help is-danger"></span>
+                </div>
+                <div class="field">
+                    <label class="label" asp-for="Password"></label>
+                    <div class="control">
+                        <input asp-for="Password" class="input">
+                    </div>
+                    <span asp-validation-for="Password" class="help is-danger"></span>
+                </div>
+                <div class="field">
+                    <label class="checkbox" asp-for="RememberMe">
+                        <input asp-for="RememberMe">
+                        @Html.DisplayNameFor(m => m.RememberMe)
+                    </label>
+                </div>
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button class="button is-link">Login</button>
+                    </div>
+                </div>
+                <p>
+                    <a asp-action="ForgotPassword">Forgot your password?</a>
+                </p>
+                <p>
+                    <a asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]">Register as a new user?</a>
+                </p>
+            </form>
+        </section>
+    </div>
+</div>

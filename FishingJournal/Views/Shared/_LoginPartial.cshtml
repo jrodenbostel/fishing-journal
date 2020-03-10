@@ -1,0 +1,27 @@
+@using FishingJournal.Models
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+<div class="navbar-end">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <div class="navbar-item">Hello @UserManager.GetUserName(User)!</div>
+        <div class="navbar-item">
+            <div class="buttons">
+                <form asp-controller="Account" asp-action="Logout" method="post">
+                    <button class="button is-light" type="submit">Log out</button>
+                </form>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="navbar-item">
+            <div class="buttons">
+                <a class="button is-light" asp-controller="Account" asp-action="Login">Log in</a>
+                <a class="button is-link" asp-controller="Account" asp-action="Register">Register</a>
+            </div>
+        </div>
+    }
+</div>

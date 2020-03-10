@@ -1,0 +1,58 @@
+using System;
+using System.Linq;
+using costume_inventory_test.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace costume_inventory_test.Models
+{
+    public static class SeedData
+    {
+        public static void Initialize(IServiceProvider serviceProvider)
+        {
+            SeedRoles(serviceProvider);
+            SeedUsers(serviceProvider);          
+        }
+
+        private static void SeedUsers(IServiceProvider serviceProvider)
+        {
+            var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            foreach (var user in userManager.Users.ToList())
+            {
+                userManager.DeleteAsync(user).Wait();
+            }
+            if (userManager.FindByEmailAsync("<username goes here>").Result == null)
+            {
+                IdentityUser user = new IdentityUser();
+                user.UserName = "<username goes here>";
+                user.Email = "<email goes here>";
+                user.EmailConfirmed = true;
+            
+                IdentityResult result = userManager.CreateAsync(user, "<password goes here>").Result;
+            
+                if (result.Succeeded)
+                {
+                    userManager.AddToRoleAsync(user, "Admin").Wait();
+                }
+            }
+        }
+ 
+        private static void SeedRoles(IServiceProvider serviceProvider)
+        {
+            var roleManager
+                = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            foreach (var role in roleManager.Roles.ToList())
+            {
+                roleManager.DeleteAsync(role).Wait();
+            }
+            if (!roleManager.RoleExistsAsync("Admin").Result)
+            {
+                IdentityRole role = new IdentityRole();
+                role.Name = "Admin";
+                IdentityResult roleResult = roleManager.
+                    CreateAsync(role).Result;
+            }
+        }
+    }
+}

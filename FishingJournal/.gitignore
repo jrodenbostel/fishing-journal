@@ -4,3 +4,4 @@ wwwroot/**/*.css
 wwwroot/fonts/*.*
 node_modules
 appsettings.json
+Models/SeedData.cs

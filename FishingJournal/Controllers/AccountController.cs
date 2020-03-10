@@ -1,0 +1,253 @@
+using System;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
+using FishingJournal.Models;
+using FishingJournal.Models.ViewModels;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+
+namespace FishingJournal.Controllers
+{
+    public class AccountController : Controller
+    {
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
+        private readonly ILogger _logger;
+        private readonly IEmailSender _emailSender;
+
+        public IAccountControllerWrappers Wrappers { get; set; }
+
+        public AccountController(
+            UserManager<User> userManager,
+            SignInManager<User> signInManager,
+            ILogger<AccountController> logger,
+            IEmailSender emailSender)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _logger = logger;
+            _emailSender = emailSender;
+            Wrappers = new AccountControllerWrappers();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Register(string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            if (ModelState.IsValid)
+            {
+                var user = new User {UserName = model.Email, Email = model.Email};
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("User created a new account with password.");
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var callbackUrl = Url.ActionLink(nameof(ConfirmEmail),
+                        values: new {userId = user.Id, code = code});
+
+                    var emailResult = _emailSender.SendEmailAsync(model.Email, "Confirm your email",
+                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    TempData["Information"] = "Confirmation email sent.";
+                    _logger.LogInformation("User created a new account with password.");
+                    return RedirectToLocal(returnUrl);
+                }
+
+                AddErrors(result);
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+
+            if (result.Succeeded)
+            {
+                TempData["Information"] = "Registration confirmed!";
+                return RedirectToAction(nameof(Login));
+            }
+
+            TempData["Error"] = "Something went wrong.";
+            return RedirectToAction(nameof(Register));
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login(string returnUrl = null)
+        {
+            // Clear the existing external cookie to ensure a clean login process
+            await Wrappers.SignOutAsync(HttpContext);
+
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            if (ModelState.IsValid)
+            {
+                // This doesn't count login failures towards account lockout
+                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe,
+                    lockoutOnFailure: false);
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("User logged in.");
+                    return RedirectToLocal(returnUrl);
+                }
+
+                if (result.IsLockedOut)
+                {
+                    _logger.LogWarning("User account locked out.");
+                    return RedirectToAction(nameof(Lockout));
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    return View(model);
+                }
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            _logger.LogInformation("User logged out.");
+            return RedirectToAction(nameof(HomeController.Index), "Home");
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Lockout()
+        {
+            return View();
+        }
+
+        private void AddErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+        }
+
+        private IActionResult RedirectToLocal(string returnUrl)
+        {
+            if (returnUrl != null && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            else
+            {
+                return RedirectToAction(nameof(HomeController.Index), "Home");
+            }
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user != null)
+            {
+                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var callbackUrl = Url.ActionLink(nameof(ResetPassword),
+                    values: new {userId = user.Id, code = code});
+
+                var emailResult = _emailSender.SendEmailAsync(model.Email, "Reset your password",
+                    $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                TempData["Information"] = "Password reset email sent.";
+                return RedirectToAction(nameof(Login));
+            }
+
+            TempData["Error"] = "No user with that email address found.";
+            return RedirectToAction(nameof(Register));
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword(string userId, string code)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            var viewModel = new ResetPasswordViewModel {Email = user.Email, Code = code};
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user != null)
+            {
+                var code = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
+
+                var emailResult = _emailSender.SendEmailAsync(model.Email, "Password reset notification",
+                    $"Your password has been reset successfully.");
+                TempData["Information"] = "Password reset successfully.";
+                return RedirectToAction(nameof(Login));
+            }
+
+            TempData["Error"] = "No user with that email address found.";
+            return RedirectToAction(nameof(Register));
+        }
+
+        public IActionResult ExternalLogin()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class AccountControllerWrappers : IAccountControllerWrappers
+    {
+        public async Task SignOutAsync(HttpContext context)
+        {
+            await context.SignOutAsync(IdentityConstants.ExternalScheme);
+        }
+    }
+
+    public interface IAccountControllerWrappers
+    {
+        public Task SignOutAsync(HttpContext context);
+    }
+}

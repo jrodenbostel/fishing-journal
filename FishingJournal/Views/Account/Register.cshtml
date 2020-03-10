@@ -1,0 +1,43 @@
+@model FishingJournal.Models.ViewModels.RegisterViewModel
+
+@{
+    ViewBag.Title = "Register";
+    Layout = "_Layout";
+}
+<div class="container">
+    <div class="column is-half">
+        <section>
+            <form asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+                <h4 class="title is-4">Create a new account.</h4>
+                <hr/>
+                <div asp-validation-summary="All" class="has-text-danger"></div>
+                <div class="field">
+                    <label class="label" asp-for="Email"></label>
+                    <div class="control">
+                        <input asp-for="Email" class="input">
+                    </div>
+                    <span asp-validation-for="Email" class="help is-danger"></span>
+                </div>
+                <div class="field">
+                    <label class="label" asp-for="Password"></label>
+                    <div class="control">
+                        <input asp-for="Password" class="input">
+                    </div>
+                    <span asp-validation-for="Password" class="help is-danger"></span>
+                </div>
+                <div class="field">
+                    <label class="label" asp-for="Password"></label>
+                    <div class="control">
+                        <input asp-for="ConfirmPassword" class="input">
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="help is-danger"></span>
+                </div>
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button class="button is-link">Register</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>

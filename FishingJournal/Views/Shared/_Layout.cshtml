@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"] - FishingJournal</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+</head>
+<body>
+<header>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="https://bulma.io">
+                <span class="icon navbar-item">
+                    <i class="fas fa-fish"></i>
+                </span>
+            </a>
+        </div>
+
+        <div class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="/">
+                    Home
+                </a>
+            </div>
+            @await Html.PartialAsync("_LoginPartial")
+        </div>
+    </nav>
+</header>
+<section>
+    <div class="container">
+        <div class="column is-10 is-offset-1">
+            <h1 class="title is-1">@ViewData["Title"]</h1>
+            <h3 class="title is-3 has-text-info">@ViewData["Information"]</h3>
+            <h3 class="title is-3 has-text-danger">@ViewData["Error"]</h3>
+            <h3 class="title is-3 has-text-info">@TempData["Information"]</h3>
+            <h3 class="title is-3 has-text-danger">@TempData["Error"]</h3>
+            @RenderBody()
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="content has-text-centered">
+        &copy; 2020 - FishingJournal - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    </div>
+</footer>
+<script src="~/js/layout.js" asp-append-version="true"></script>
+</body>
+</html>
