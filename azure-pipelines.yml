@@ -7,12 +7,13 @@ trigger:
 - master
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'ubuntu-latest'
 
 variables:
   solution: '**/*.csproj'
   buildConfiguration: 'Debug'
   workingDirectory: 'FishingJournal'
+  projectName: 'fish-journal'
 
 steps:
 - task: Npm@1
@@ -41,3 +42,18 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'test'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: publish
+    publishWebProjects: True
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: True
+
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: '$(projectName)'
+    appType: 'webApp'
+    appName: '$(projectName)'
+    package: '$(System.ArtifactsDirectory)/**/*.zip'
+    deploymentMethod: 'auto'
