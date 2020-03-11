@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using FishingJournal.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FishingJournal.Controllers
 {
+    
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -17,7 +19,8 @@ namespace FishingJournal.Controllers
         {
             _logger = logger;
         }
-
+        
+        [Authorize]
         public IActionResult Index()
         {
             return View();
