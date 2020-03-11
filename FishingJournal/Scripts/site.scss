@@ -27,12 +27,6 @@ body * {
   text-transform: uppercase;
 }
 
-section#main {
-  background-color: $national-park-green;
-  color: beige;
-  letter-spacing: .05rem;
-}
-
 h1, h2, h3, h4 {
   letter-spacing: .1rem;
 }
@@ -51,20 +45,15 @@ h1, h2, h3, h4 {
   }
 }
 
+section#main {
+  background-color: $national-park-green;
+  color: beige;
+  letter-spacing: .05rem;
+  height: 750px;
+}
+
 .footer {
   background-color: black;
   color: beige;
   letter-spacing: .1rem;
 }
-
-
-//$primary: $turquoise;
-//$link: $blue;
-//$info: $cyan;
-//$success: $green;
-//$warning: $yellow;
-//$danger: $red;
-//$dark: $grey-darker;
-//$text: $grey-dark;
-
-//;

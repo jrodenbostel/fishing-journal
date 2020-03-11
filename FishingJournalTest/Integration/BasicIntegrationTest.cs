@@ -60,7 +60,7 @@ namespace FishJournalTest.Integration
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Contains("Home Page", body);
+            Assert.Contains("Home", body);
         }
 
         private HttpClient GetClient(Boolean redirects = true)
