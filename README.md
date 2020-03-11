@@ -1,9 +1,7 @@
 # Fishing Journal Project
 The purpose of this project is to serve as a home for learning and experimenting with .NET Core. Eventually, there will be a blog series about some of the struggles related to .NET development on macOS that I've worked through.  Further into the future, this may actually be a private online fishing journal, too.
 
-This app is not yet deployed anywhere.
-
-This app is not yet continuously integrated.
+[![Build Status](https://dev.azure.com/fishing-journal/fishing-journal/_apis/build/status/fishing-journal?branchName=master)](https://dev.azure.com/fishing-journal/fishing-journal/_apis/build/status/fishing-journal?branchName=master)
 
 ## Prequisites
 * dotnet-sdk (installed via Homebrew: https://formulae.brew.sh/cask/dotnet-sdk)
