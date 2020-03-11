@@ -2,7 +2,6 @@
 The purpose of this project is to serve as a home for learning and experimenting with .NET Core. Eventually, there will be a blog series about some of the struggles related to .NET development on macOS that I've worked through.  Further into the future, this may actually be a private online fishing journal, too.
 
 ## Build Status
-This project is built with Azure DevOps:
 
 [![Build Status](https://dev.azure.com/fishing-journal/fishing-journal/_apis/build/status/fishing-journal?branchName=master)](https://dev.azure.com/fishing-journal/fishing-journal/_apis/build/status/fishing-journal?branchName=master)
 
