@@ -12,7 +12,7 @@ pool:
 variables:
   solution: '**/*.csproj'
   buildConfiguration: 'Debug'
-  workingDirectory: 'CostumeInventory'
+  workingDirectory: 'FishingJournal'
 
 steps:
 - task: Npm@1
