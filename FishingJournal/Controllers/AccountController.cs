@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace FishingJournal.Controllers
@@ -19,6 +20,7 @@ namespace FishingJournal.Controllers
         private readonly SignInManager<User> _signInManager;
         private readonly ILogger _logger;
         private readonly IEmailSender _emailSender;
+        private readonly IConfiguration _configuration;
 
         public IAccountControllerWrappers Wrappers { get; set; }
 
@@ -26,12 +28,14 @@ namespace FishingJournal.Controllers
             UserManager<User> userManager,
             SignInManager<User> signInManager,
             ILogger<AccountController> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _configuration = configuration;
             Wrappers = new AccountControllerWrappers();
         }
 
@@ -48,6 +52,12 @@ namespace FishingJournal.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
+            if (!Convert.ToBoolean(_configuration["EnableRegistration"]))
+            {
+                // If we got this far, something failed, redisplay form
+                ViewData["Error"] = "Registration disabled!";
+                return View();
+            }
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {

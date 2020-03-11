@@ -24,7 +24,7 @@ namespace FishJournalTest.Controllers
             var mock = new Mock<IAccountControllerWrappers>();
             const string returnUrl = "/yay";
             mock.Setup(x => x.SignOutAsync(It.IsAny<HttpContext>())).Returns(Task.FromResult(""));
-            var accountController = new AccountController(null, null, null, null);
+            var accountController = new AccountController(null, null, null, null, null);
             accountController.Wrappers = mock.Object;
 
             //Act
@@ -71,7 +71,7 @@ namespace FishJournalTest.Controllers
                 It.IsAny<bool>(), It.IsAny<bool>())).ReturnsAsync(SignInResult.Success);
 
             var accountController = new AccountController(mockUserManager.Object, mockSignInManager.Object,
-                mockLogger.Object, null);
+                mockLogger.Object, null, null);
 
             //Act
             var response = accountController.Login(loginModel).Result;
@@ -94,7 +94,7 @@ namespace FishJournalTest.Controllers
 
             var loginModel = new LoginViewModel {Email = email};
             var mock = new Mock<ILogger<AccountController>>().Object;
-            var accountController = new AccountController(null, null, mock, null);
+            var accountController = new AccountController(null, null, mock, null, null);
             accountController.ModelState.AddModelError("key", "error message");
 
             //Act
