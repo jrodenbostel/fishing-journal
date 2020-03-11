@@ -1,11 +1,70 @@
 @charset "utf-8";
 
+//my variables
+$national-park-green: rgba(146, 154, 110, 0.89);
+
+//bulma variables
 $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 $footer-padding: 1.5rem 1.5rem 1.5rem;
+$family-primary: "National Park Thin", "National Park", sans-serif;
+$primary: steelblue;
+$link: saddlebrown;
+$info: slateblue;
+$success: darkgreen;
+$warning: gold;
+$danger: orangered;
+$dark: black;
+$text: dimgray;
 
+//imports
 @import "~bulma/bulma";
 @import "~@fortawesome/fontawesome-free/scss/fontawesome";
 @import "~@fortawesome/fontawesome-free/scss/regular";
+@import "~typeface-national-park/index.css";
+
+//site-wide styles
+body * {
+  text-transform: uppercase;
+}
+
+section#main {
+  background-color: $national-park-green;
+  color: beige;
+  letter-spacing: .05rem;
+}
+
+h1, h2, h3, h4 {
+  letter-spacing: .1rem;
+}
+
+.navbar {
+  letter-spacing: .1rem;
+  background-color: black;
+  color: beige;
+
+  .navbar-item {
+    color: beige;
+  }
+
+  a {
+    color: beige;
+  }
+}
+
+.footer {
+  background-color: black;
+  color: beige;
+  letter-spacing: .1rem;
+}
 
 
+//$primary: $turquoise;
+//$link: $blue;
+//$info: $cyan;
+//$success: $green;
+//$warning: $yellow;
+//$danger: $red;
+//$dark: $grey-darker;
+//$text: $grey-dark;
 
+//;

@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="has-navbar-fixed-top">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -8,7 +8,7 @@
 </head>
 <body>
 <header>
-    <nav class="navbar" role="navigation" aria-label="main navigation">
+    <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="https://bulma.io">
                 <span class="icon navbar-item">
@@ -27,7 +27,7 @@
         </div>
     </nav>
 </header>
-<section>
+<section id="main">
     <div class="container">
         <div class="column is-10 is-offset-1">
             <h1 class="title is-1">@ViewData["Title"]</h1>
@@ -42,7 +42,7 @@
 
 <footer class="footer">
     <div class="content has-text-centered">
-        &copy; 2020 - FishingJournal - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        &copy; 2020 - Fishing Journal - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
     </div>
 </footer>
 <script src="~/js/layout.js" asp-append-version="true"></script>
