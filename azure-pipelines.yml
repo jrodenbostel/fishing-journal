@@ -13,7 +13,7 @@ variables:
   solution: '**/*.csproj'
   buildConfiguration: 'Debug'
   workingDirectory: 'FishingJournal'
-  projectName: 'fish-journal'
+  projectName: 'fishing-journal'
 
 steps:
 - task: Npm@1
