@@ -7,25 +7,32 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
 </head>
 <body>
-<header>
-    <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
-        <div class="navbar-brand">
-            <a class="navbar-item" href="https://bulma.io">
-                <span class="icon navbar-item">
-                    <i class="fas fa-fish"></i>
-                </span>
-            </a>
-        </div>
-
-        <div class="navbar-menu">
-            <div class="navbar-start">
-                <a class="navbar-item" href="/">
-                    Home
+<header id="navbar-root">
+    <vue-navbar inline-template>
+        <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+            <div class="navbar-brand">
+                <a class="navbar-item" href="https://bulma.io">
+                    <span class="icon">
+                        <i class="fas fa-fish"></i>
+                    </span>
+                    <span>The Fishing Journal</span>
                 </a>
+    <a role="button" v-on:click="toggle" v-bind:class="{ 'is-active': burgerActive }" class="navbar-burger burger" data-target="menuBar">
+      <span></span>
+      <span></span>
+      <span></span>
+    </a>
             </div>
-            @await Html.PartialAsync("_LoginPartial")
-        </div>
-    </nav>
+            <div id="menuBar" v-bind:class="{ 'is-active': burgerActive }" class="navbar-menu">
+                <div class="navbar-start">
+                    <a class="navbar-item" href="/">
+                        Home
+                    </a>
+                </div>
+                @await Html.PartialAsync("_LoginPartial")
+            </div>
+        </nav>
+    </vue-navbar>
 </header>
 <section id="main">
     <div class="container">

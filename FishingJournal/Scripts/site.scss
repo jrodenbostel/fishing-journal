@@ -36,6 +36,10 @@ h1, h2, h3, h4 {
   background-color: black;
   color: beige;
 
+  .navbar-menu {
+    background-color: black;
+  }
+  
   .navbar-item {
     color: beige;
   }
@@ -49,7 +53,7 @@ section#main {
   background-color: $national-park-green;
   color: beige;
   letter-spacing: .05rem;
-  height: 750px;
+  min-height: 750px;
 }
 
 .footer {
