@@ -26,6 +26,9 @@ namespace FishJournalTest
             const String connectionString = "DataSource=:memory:";
             var connection = new SqliteConnection(connectionString);
             connection.Open();
+            
+            services.AddDbContext<DefaultContext>(options =>
+                options.UseSqlite(connection));
 
             services.AddDbContext<IdentityContext>(options =>
                 options.UseSqlite(connection));

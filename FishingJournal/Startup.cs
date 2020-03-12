@@ -31,6 +31,9 @@ namespace FishingJournal
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
+            services.AddDbContext<DefaultContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            
             services.AddDbContext<IdentityContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 

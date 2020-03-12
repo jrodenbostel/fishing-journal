@@ -4,16 +4,14 @@ using FishingJournal.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace FishingJournal.Migrations
+namespace FishingJournal.Migrations.Identity
 {
     [DbContext(typeof(IdentityContext))]
-    [Migration("20200310201906_IdentityScaffold")]
-    partial class IdentityScaffold
+    partial class IdentityContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
