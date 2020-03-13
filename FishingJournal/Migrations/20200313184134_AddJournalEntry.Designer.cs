@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FishingJournal.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    [Migration("20200312024538_CreateJournalEntry")]
-    partial class CreateJournalEntry
+    [Migration("20200313184134_AddJournalEntry")]
+    partial class AddJournalEntry
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -31,8 +31,14 @@ namespace FishingJournal.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Location")
+                    b.Property<string>("Latitude")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LocationOverride")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Longitude")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Notes")

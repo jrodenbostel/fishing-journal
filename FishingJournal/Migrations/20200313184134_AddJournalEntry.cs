@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace FishingJournal.Migrations
 {
-    public partial class CreateJournalEntry : Migration
+    public partial class AddJournalEntry : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,7 +14,9 @@ namespace FishingJournal.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Notes = table.Column<string>(nullable: false),
-                    Location = table.Column<string>(nullable: false),
+                    Latitude = table.Column<string>(nullable: true),
+                    Longitude = table.Column<string>(nullable: true),
+                    LocationOverride = table.Column<string>(nullable: false),
                     WeatherSummary = table.Column<string>(nullable: false),
                     Date = table.Column<DateTime>(nullable: false)
                 },
