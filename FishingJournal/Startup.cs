@@ -48,7 +48,7 @@ namespace FishingJournal
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DefaultContext context)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DefaultContext defaultContext, IdentityContext identityContext)
         {
             if (env.IsDevelopment())
             {
@@ -62,7 +62,8 @@ namespace FishingJournal
                 app.UseHsts();
             }
             
-            context.Database.Migrate();
+            defaultContext.Database.Migrate();
+            identityContext.Database.Migrate();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
