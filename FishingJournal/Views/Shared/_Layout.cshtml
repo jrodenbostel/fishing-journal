@@ -11,17 +11,17 @@
     <vue-navbar inline-template>
         <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
-                <a class="navbar-item" href="https://bulma.io">
+                <div class="navbar-item">
                     <span class="icon">
                         <i class="fas fa-fish"></i>
                     </span>
                     <span>The Fishing Journal</span>
-                </a>
-    <a role="button" v-on:click="toggle" v-bind:class="{ 'is-active': burgerActive }" class="navbar-burger burger" data-target="menuBar">
-      <span></span>
-      <span></span>
-      <span></span>
-    </a>
+                    <a role="button" v-on:click="toggle" v-bind:class="{ 'is-active': burgerActive }" class="navbar-burger burger" data-target="menuBar">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </a>
+                </div>
             </div>
             <div id="menuBar" v-bind:class="{ 'is-active': burgerActive }" class="navbar-menu">
                 <div class="navbar-start">
