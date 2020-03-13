@@ -27,7 +27,7 @@ The purpose of this project is to serve as a home for learning and experimenting
 ### Useful Commands
 * drop all database tables: `dotnet ef database drop -f -v -c DefaultContext`
 * migrate database to latest version: `dotnet ef database update -c DefaultContext`
-* simple scaffolding (requires model): `dotnet aspnet-codegenerator controller -name ShowsController -m <model name> -dc DefaultContext --relativeFolderPath Controllers`
+* simple scaffolding (requires model): `dotnet aspnet-codegenerator controller -name <controller name> -m <model name> -dc DefaultContext --relativeFolderPath Controllers`
 * add a migration: `dotnet ef migrations add <model name> -c DefaultContext`
 * run migrations: `dotnet database update -c DefaultContext`
 
