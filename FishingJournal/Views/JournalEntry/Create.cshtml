@@ -1,0 +1,67 @@
+@model FishingJournal.Models.JournalEntry
+
+@{
+    ViewBag.Title = "Create an Entry";
+    Layout = "_Layout";
+}
+<div class="container">
+    <div class="column is-half">
+        <section id="root">
+            <journal-entry inline-template>
+                <form v-on:submit="checkForm" asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
+                    <input type="hidden" asp-for="Latitude" v-model="fields.Latitude.value"/>
+                    <input type="hidden" asp-for="Longitude" v-model="fields.Longitude.value"/>
+                    <div class="field">
+                        <label class="label" asp-for="LocationOverride"></label>
+                        <span v-if="fields.Latitude.value && fields.Longitude.value" class="help is-success">Location coordinates retrieved</span>                        
+                        <div class="field is-grouped">
+                            <div class="control is-expanded">
+                                <input v-bind:class="{ 'is-danger': fields.LocationOverride.error }" v-model="fields.LocationOverride.value" asp-for="LocationOverride" class="input">
+                            </div>
+                            <p class="control">
+                                <a class="button is-info" v-on:click="getLocation" v-bind:class="{ 'is-loading' : retrieving }" v-bind:disabled="retrieving">
+                                    <i class="fas fa-crosshairs"></i>
+                                </a>
+                            </p>
+                        </div>                        
+                        <span class="help is-danger">{{fields.LocationOverride.error}}</span>
+                        <span asp-validation-for="LocationOverride" class="help is-danger"></span>
+                    </div>
+                    <div class="field">
+                        <label class="label" asp-for="WeatherSummary"></label>
+                        <div class="control">
+                            <input v-bind:class="{ 'is-danger': fields.WeatherSummary.error }" v-model="fields.WeatherSummary.value" asp-for="WeatherSummary" class="input">
+                        </div>
+                        <span class="help is-danger">{{fields.WeatherSummary.error}}</span>
+                        <span asp-validation-for="Notes" class="help is-danger"></span>
+                    </div>
+                    <div class="field">
+                        <label class="label" asp-for="Date"></label>
+                        <div class="control">
+                            <input v-on:keyup="checkForm" v-bind:class="{ 'is-danger': fields.Date.error }" v-model="fields.Date.value" asp-for="Date" class="input">
+                        </div>
+                        <span class="help is-danger">{{fields.Date.error}}</span>
+                        <span asp-validation-for="Date" class="help is-danger"></span>
+                    </div>
+                    <div class="field">
+                        <label class="label" asp-for="Notes"></label>
+                        <div class="control">
+                            <textarea rows="10" v-bind:class="{ 'is-danger': fields.Notes.error }" v-model="fields.Notes.value" asp-for="Notes" class="textarea"></textarea>
+                        </div>
+                        <span class="help is-danger">{{fields.Notes.error}}</span>
+                        <span asp-validation-for="Notes" class="help is-danger"></span>
+                    </div>
+
+                    <div class="field is-grouped">
+                        <div class="control">
+                            <button class="button is-primary">Save</button>
+                            <a class="button is-link is-light" asp-action="Index">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </journal-entry>
+        </section>
+    </div>
+    <script src="~/js/journalEntryValidation.js" asp-append-version="true"></script>
+</div>

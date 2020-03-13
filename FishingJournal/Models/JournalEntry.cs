@@ -10,9 +10,13 @@ namespace FishingJournal.Models
         [Required]
         public string Notes { get; set; }
         
+        public string Latitude { get; set; }
+        
+        public string Longitude { get; set; }
+        
         [Display(Name = "Location")]
         [Required]
-        public string Location { get; set; }
+        public string LocationOverride { get; set; }
         
         [Display(Name = "Weather Summary")]
         [Required]
