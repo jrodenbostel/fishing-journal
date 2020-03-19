@@ -164,7 +164,7 @@ namespace FishJournalTest.Controllers
                 new Mock<UserManager<User>>(mockUserStore.Object, null, null, null, null, null, null, null, null);
             var mockEmailSender = new Mock<IEmailSender>();
             
-            mockWrappers.Setup(x => x.GetActionLink(It.IsAny<IUrlHelper>(), It.IsAny<User>(), It.IsAny<string>())).Returns("test");
+            mockWrappers.Setup(x => x.GetActionLink(It.IsAny<IUrlHelper>(), It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>())).Returns("test");
             mockWrappers.Setup(x => x.IsLocalUrl(It.IsAny<IUrlHelper>(), It.IsAny<string>())).Returns(true);
             mockUserManager.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
                 .ReturnsAsync(IdentityResult.Success);

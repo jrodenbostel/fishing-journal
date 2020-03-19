@@ -68,7 +68,7 @@ namespace FishingJournal.Controllers
                 {
                     _logger.LogInformation("User created a new account with password.");
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Wrappers.GetActionLink(Url, user, code);
+                    var callbackUrl = Wrappers.GetActionLink(Url, nameof(ConfirmEmail), user, code);
 
                     var emailResult = _emailSender.SendEmailAsync(model.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
@@ -198,8 +198,7 @@ namespace FishingJournal.Controllers
             if (user != null)
             {
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var callbackUrl = Url.ActionLink(nameof(ResetPassword),
-                    values: new {userId = user.Id, code = code});
+                var callbackUrl = Wrappers.GetActionLink(Url, nameof(ResetPassword), user, code);;
 
                 var emailResult = _emailSender.SendEmailAsync(model.Email, "Reset your password",
                     $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
@@ -255,22 +254,22 @@ namespace FishingJournal.Controllers
             await context.SignOutAsync(IdentityConstants.ExternalScheme);
         }
 
-        public string GetActionLink(IUrlHelper helper, User user, string code)
+        public string GetActionLink(IUrlHelper helper, string action, User user, string code)
         {
-            return helper.ActionLink(nameof(AccountController.ConfirmEmail),
+            return helper.ActionLink(action,
                 values: new {userId = user.Id, code = code});
         }
 
         public bool IsLocalUrl(IUrlHelper helper, string url)
         {
-            throw new NotImplementedException();
+            return helper.IsLocalUrl(url);
         }
     }
 
     public interface IAccountControllerWrappers
     {
         public Task SignOutAsync(HttpContext context);
-        public string GetActionLink(IUrlHelper helper, User user, string code);
+        public string GetActionLink(IUrlHelper helper, string action, User user, string code);
         public bool IsLocalUrl(IUrlHelper helper, string url);
     }
 }
