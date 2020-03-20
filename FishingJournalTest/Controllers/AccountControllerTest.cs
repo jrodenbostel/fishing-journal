@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -157,9 +158,9 @@ namespace FishJournalTest.Controllers
                 ConfirmPassword = "test_password1"
             };
             var mockConfiguration = new Mock<IConfiguration>();
-            mockConfiguration.Setup(x => x["EnableRegistration"]).Returns("true");
             var mockEmailSender = new Mock<IEmailSender>();
 
+            mockConfiguration.Setup(x => x["EnableRegistration"]).Returns("true");
             mockWrappers.Setup(x =>
                     x.GetActionLink(It.IsAny<IUrlHelper>(), It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>()))
                 .Returns("test");
@@ -311,6 +312,50 @@ namespace FishJournalTest.Controllers
             _mockUserManager.Verify(x => x.FindByEmailAsync(forgotPasswordViewModel.Email), Times.Once);
             Assert.Contains(nameof(accountController.Register), result.ActionName);
             Assert.Equal("No user with that email address found.", accountController.TempData["Error"]);
+        }
+        
+        [Fact]
+        public void ForgotPasswordShouldSucceed()
+        {
+            //Arrange
+            Setup();
+
+            const string email = "test@test.com";
+            const string code = "1234";
+            var forgotPasswordViewModel = new ForgotPasswordViewModel
+            {
+                Email = email
+            };
+
+            var user = new User
+            {
+                Email = email
+            };
+            var context = new DefaultHttpContext();
+            var mockTempData = new TempDataDictionary(context, Mock.Of<ITempDataProvider>()) {["Information"] = ""};
+            var mockWrappers = new Mock<IAccountControllerWrappers>();
+            var mockEmailSender = new Mock<IEmailSender>();
+            
+            _mockUserManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(user);
+            _mockUserManager.Setup(x => x.GeneratePasswordResetTokenAsync(user)).ReturnsAsync(code);
+            mockWrappers.Setup(x => x.GetActionLink(It.IsAny<IUrlHelper>(), It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>())).Returns("callbackUrl");
+            mockEmailSender.Setup(x => x.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(""));
+
+            var accountController = new AccountController(_mockUserManager.Object, null, null,
+                mockEmailSender.Object, null) {Wrappers = mockWrappers.Object, TempData = mockTempData};
+
+            //Act
+            var response = accountController.ForgotPassword(forgotPasswordViewModel).Result;
+
+            //Assert
+            var result = Assert.IsType<RedirectToActionResult>(response);
+            _mockUserManager.Verify(x => x.FindByEmailAsync(forgotPasswordViewModel.Email), Times.Once);
+            _mockUserManager.Verify(x => x.GeneratePasswordResetTokenAsync(user), Times.Once);
+            mockWrappers.Verify(x => x.GetActionLink(It.IsAny<IUrlHelper>(), It.IsAny<string>(), user, code), Times.Once);
+            mockEmailSender.Verify(x => x.SendEmailAsync(email, "Reset your password", It.IsAny<string>()), Times.Once());
+            Assert.Contains(nameof(accountController.Login), result.ActionName);
+            Assert.Equal("Password reset email sent.", accountController.TempData["Information"]);
         }
 
         private void Setup()

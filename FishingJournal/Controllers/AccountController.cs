@@ -70,7 +70,7 @@ namespace FishingJournal.Controllers
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Wrappers.GetActionLink(Url, nameof(ConfirmEmail), user, code);
 
-                    var emailResult = _emailSender.SendEmailAsync(model.Email, "Confirm your email",
+                    await _emailSender.SendEmailAsync(model.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
                     TempData["Information"] = "Confirmation email sent.";
                     _logger.LogInformation("User created a new account with password.");
@@ -200,9 +200,8 @@ namespace FishingJournal.Controllers
             {
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var callbackUrl = Wrappers.GetActionLink(Url, nameof(ResetPassword), user, code);
-                ;
 
-                var emailResult = _emailSender.SendEmailAsync(model.Email, "Reset your password",
+                await _emailSender.SendEmailAsync(model.Email, "Reset your password",
                     $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
                 TempData["Information"] = "Password reset email sent.";
                 return RedirectToAction(nameof(Login));
