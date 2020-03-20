@@ -1,4 +1,4 @@
-@model FishingJournal.Models.JournalEntry
+@model JournalEntry
 
 @{
     ViewBag.Title = "Create an Entry";
@@ -14,7 +14,7 @@
                     <input type="hidden" asp-for="Longitude" v-model="fields.Longitude.value"/>
                     <div class="field">
                         <label class="label" asp-for="LocationOverride"></label>
-                        <span v-if="fields.Latitude.value && fields.Longitude.value" class="help is-success">Location coordinates retrieved</span>                        
+                        <span v-if="fields.Latitude.value && fields.Longitude.value" class="help is-success">Location coordinates retrieved</span>
                         <div class="field is-grouped">
                             <div class="control is-expanded">
                                 <input v-bind:class="{ 'is-danger': fields.LocationOverride.error }" v-model="fields.LocationOverride.value" asp-for="LocationOverride" class="input">
@@ -24,7 +24,7 @@
                                     <i class="fas fa-crosshairs"></i>
                                 </a>
                             </p>
-                        </div>                        
+                        </div>
                         <span class="help is-danger">{{fields.LocationOverride.error}}</span>
                         <span asp-validation-for="LocationOverride" class="help is-danger"></span>
                     </div>

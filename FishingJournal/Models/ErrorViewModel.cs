@@ -1,5 +1,3 @@
-using System;
-
 namespace FishingJournal.Models
 {
     public class ErrorViewModel

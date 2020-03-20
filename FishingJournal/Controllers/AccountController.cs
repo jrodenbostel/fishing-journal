@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -59,6 +58,7 @@ namespace FishingJournal.Controllers
                 ViewData["Error"] = "Registration disabled!";
                 return View();
             }
+
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
@@ -150,7 +150,8 @@ namespace FishingJournal.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await Wrappers.SignOutAsync(HttpContext);
+            await _signInManager.SignOutAsync();
+
             _logger.LogInformation("User logged out.");
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
@@ -198,7 +199,8 @@ namespace FishingJournal.Controllers
             if (user != null)
             {
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var callbackUrl = Wrappers.GetActionLink(Url, nameof(ResetPassword), user, code);;
+                var callbackUrl = Wrappers.GetActionLink(Url, nameof(ResetPassword), user, code);
+                ;
 
                 var emailResult = _emailSender.SendEmailAsync(model.Email, "Reset your password",
                     $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");

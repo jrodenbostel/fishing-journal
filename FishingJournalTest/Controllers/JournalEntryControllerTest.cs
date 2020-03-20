@@ -1,5 +1,4 @@
 using System;
-using System.Net;
 using System.Threading;
 using FishingJournal.Controllers;
 using FishingJournal.Data;
@@ -25,7 +24,7 @@ namespace FishJournalTest.Controllers
             //Assert
             Assert.NotNull(response);
         }
-        
+
         [Fact]
         public void CreatePostShouldCreate()
         {
@@ -44,9 +43,9 @@ namespace FishJournalTest.Controllers
 
             mockContext.Setup(x => x.Add(It.IsAny<JournalEntry>()));
             mockContext.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()));
-            
+
             var controller = new JournalEntryController(mockContext.Object);
-            
+
             //Act
             var response = controller.Create(journalEntry).Result;
 

@@ -17,13 +17,13 @@
                     </span>
                     <span>The Fishing Journal</span>
                 </a>
-    <a role="button" v-on:click="toggle" v-bind:class="{ 'is-active': burgerActive }" class="navbar-burger burger" data-target="menuBar">
-      <span></span>
-      <span></span>
-      <span></span>
-    </a>
+                <a role="button" v-on:click="toggle" v-bind:class="{ 'is-active': burgerActive }" class="navbar-burger burger" data-target="menuBar">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </a>
             </div>
-            <div id="menuBar" v-bind:class="{ 'is-active': burgerActive }" class="navbar-menu">                
+            <div id="menuBar" v-bind:class="{ 'is-active': burgerActive }" class="navbar-menu">
                 <div class="navbar-start">
                     <a class="navbar-item" asp-controller="JournalEntry" asp-action="Create">
                         Create Entry

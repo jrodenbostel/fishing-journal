@@ -20,10 +20,7 @@ namespace FishingJournal.Migrations
                     WeatherSummary = table.Column<string>(nullable: false),
                     Date = table.Column<DateTime>(nullable: false)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_JournalEntries", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_JournalEntries", x => x.Id); });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

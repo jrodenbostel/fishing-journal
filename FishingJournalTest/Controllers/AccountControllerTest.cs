@@ -20,12 +20,20 @@ namespace FishJournalTest.Controllers
 {
     public class AccountControllerTest
     {
+        private Mock<IdentityContext> _mockContext;
+        private Mock<UserStore<User>> _mockUserStore;
+        private Mock<UserManager<User>> _mockUserManager;
+        private Mock<IHttpContextAccessor> _mockHttpContextAccessor;
+        private Mock<IUserClaimsPrincipalFactory<User>> _mockUserClaimsPrincipalFactory;
+        private Mock<SignInManager<User>> _mockSignInManager;
+        private Mock<ILogger<AccountController>> _mockLogger;
+
         [Fact]
         public void ShouldRenderLogin()
         {
             //Arrange
             const string returnUrl = "/yay";
-            
+
             var mock = new Mock<IAccountControllerWrappers>();
             mock.Setup(x => x.SignOutAsync(It.IsAny<HttpContext>())).Returns(Task.FromResult(""));
 
@@ -50,6 +58,8 @@ namespace FishJournalTest.Controllers
         public void ShouldRespondToLoginPostForValidModel()
         {
             //Arrange
+            Setup();
+
             const string email = "test@test.com";
             const string password = "password";
             var loginModel = new LoginViewModel
@@ -59,30 +69,19 @@ namespace FishJournalTest.Controllers
                 RememberMe = true
             };
 
-            var mockContext = new Mock<IdentityContext>(new DbContextOptions<IdentityContext>());
-            var mockUserStore = new Mock<UserStore<User>>(mockContext.Object, null);
-            var mockUserManager =
-                new Mock<UserManager<User>>(mockUserStore.Object, null, null, null, null, null, null, null, null);
-            var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-            var mockUserClaimsPrincipalFactory = new Mock<IUserClaimsPrincipalFactory<User>>();
-            var mockSignInManager = new Mock<SignInManager<User>>(mockUserManager.Object,
-                mockHttpContextAccessor.Object, mockUserClaimsPrincipalFactory.Object, null, null, null, null);
-            var mockLogger = new Mock<ILogger<AccountController>>();
-
-
-            mockSignInManager.Setup(x => x.PasswordSignInAsync(It.Is<string>(s => s.Equals(email)),
+            _mockSignInManager.Setup(x => x.PasswordSignInAsync(It.Is<string>(s => s.Equals(email)),
                 It.Is<string>(s => s.Equals(password)),
                 It.IsAny<bool>(), It.IsAny<bool>())).ReturnsAsync(SignInResult.Success);
 
-            var accountController = new AccountController(mockUserManager.Object, mockSignInManager.Object,
-                mockLogger.Object, null, null);
+            var accountController = new AccountController(_mockUserManager.Object, _mockSignInManager.Object,
+                _mockLogger.Object, null, null);
 
             //Act
             var response = accountController.Login(loginModel).Result;
 
             //Assert
             var viewResult = Assert.IsType<RedirectToActionResult>(response);
-            mockSignInManager.Verify(x => x.PasswordSignInAsync(It.Is<string>(s => s.Equals(email)),
+            _mockSignInManager.Verify(x => x.PasswordSignInAsync(It.Is<string>(s => s.Equals(email)),
                 It.Is<string>(s => s.Equals(password)),
                 It.IsAny<bool>(), It.IsAny<bool>()), Times.Once);
             Assert.Equal("Home", viewResult.ControllerName);
@@ -145,6 +144,8 @@ namespace FishJournalTest.Controllers
         public void ShouldProcessRegisterPost()
         {
             //Arrange
+            Setup();
+
             const string returnUrl = "/yay";
             var context = new DefaultHttpContext();
             var mockWrappers = new Mock<IAccountControllerWrappers>();
@@ -157,34 +158,31 @@ namespace FishJournalTest.Controllers
             };
             var mockConfiguration = new Mock<IConfiguration>();
             mockConfiguration.Setup(x => x["EnableRegistration"]).Returns("true");
-            var mockLogger = new Mock<ILogger<AccountController>>();
-            var mockContext = new Mock<IdentityContext>(new DbContextOptions<IdentityContext>());
-            var mockUserStore = new Mock<UserStore<User>>(mockContext.Object, null);
-            var mockUserManager =
-                new Mock<UserManager<User>>(mockUserStore.Object, null, null, null, null, null, null, null, null);
             var mockEmailSender = new Mock<IEmailSender>();
-            
-            mockWrappers.Setup(x => x.GetActionLink(It.IsAny<IUrlHelper>(), It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>())).Returns("test");
+
+            mockWrappers.Setup(x =>
+                    x.GetActionLink(It.IsAny<IUrlHelper>(), It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>()))
+                .Returns("test");
             mockWrappers.Setup(x => x.IsLocalUrl(It.IsAny<IUrlHelper>(), It.IsAny<string>())).Returns(true);
-            mockUserManager.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
+            _mockUserManager.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
                 .ReturnsAsync(IdentityResult.Success);
-            mockUserManager.Setup(x => x.GenerateEmailConfirmationTokenAsync(It.IsAny<User>())).ReturnsAsync("123456");
+            _mockUserManager.Setup(x => x.GenerateEmailConfirmationTokenAsync(It.IsAny<User>())).ReturnsAsync("123456");
             mockEmailSender.Setup(x => x.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
 
-            var accountController = new AccountController(mockUserManager.Object, null, mockLogger.Object,
+            var accountController = new AccountController(_mockUserManager.Object, null, _mockLogger.Object,
                 mockEmailSender.Object, mockConfiguration.Object)
             {
                 ControllerContext = {HttpContext = context}, Wrappers = mockWrappers.Object, TempData = mockTempData
-                    
             };
 
             //Act
             var response = accountController.Register(viewModel, returnUrl).Result;
 
             //Assert
-            mockUserManager.Verify(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()), Times.Once);
-            mockUserManager.Verify(x => x.GenerateEmailConfirmationTokenAsync(It.IsAny<User>()), Times.Once);
-            mockEmailSender.Verify(x => x.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            _mockUserManager.Verify(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()), Times.Once);
+            _mockUserManager.Verify(x => x.GenerateEmailConfirmationTokenAsync(It.IsAny<User>()), Times.Once);
+            mockEmailSender.Verify(x => x.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()),
+                Times.Once);
             Assert.IsType<RedirectResult>(response);
         }
 
@@ -192,6 +190,8 @@ namespace FishJournalTest.Controllers
         public void ShouldProcessConfirmEmail()
         {
             //Arrange
+            Setup();
+
             const string testCode = "test_code";
             var user = new User
             {
@@ -200,32 +200,31 @@ namespace FishJournalTest.Controllers
             };
             var context = new DefaultHttpContext();
             var mockTempData = new TempDataDictionary(context, Mock.Of<ITempDataProvider>()) {["Information"] = ""};
-            var mockContext = new Mock<IdentityContext>(new DbContextOptions<IdentityContext>());
-            var mockUserStore = new Mock<UserStore<User>>(mockContext.Object, null);
-            var mockUserManager =
-                new Mock<UserManager<User>>(mockUserStore.Object, null, null, null, null, null, null, null, null);
-            
-            mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
-            mockUserManager.Setup(x => x.ConfirmEmailAsync(It.IsAny<User>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
-            
-            var accountController = new AccountController(mockUserManager.Object, null, null,
+
+            _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
+            _mockUserManager.Setup(x => x.ConfirmEmailAsync(It.IsAny<User>(), It.IsAny<string>()))
+                .ReturnsAsync(IdentityResult.Success);
+
+            var accountController = new AccountController(_mockUserManager.Object, null, null,
                 null, null) {TempData = mockTempData};
 
             //Act
             var response = accountController.ConfirmEmail(user.Id, testCode).Result;
-            
+
             //Assert
             var result = Assert.IsType<RedirectToActionResult>(response);
-            mockUserManager.Verify(x => x.FindByIdAsync(user.Id), Times.Once);
-            mockUserManager.Verify(x => x.ConfirmEmailAsync(user, testCode), Times.Once);
+            _mockUserManager.Verify(x => x.FindByIdAsync(user.Id), Times.Once);
+            _mockUserManager.Verify(x => x.ConfirmEmailAsync(user, testCode), Times.Once);
             Assert.Contains(nameof(accountController.Login), result.ActionName);
             Assert.Equal("Registration confirmed!", accountController.TempData["Information"]);
         }
-        
+
         [Fact]
         public void ShouldProcessConfirmEmailFailure()
         {
             //Arrange
+            Setup();
+
             const string testCode = "test_code";
             var user = new User
             {
@@ -234,24 +233,21 @@ namespace FishJournalTest.Controllers
             };
             var context = new DefaultHttpContext();
             var mockTempData = new TempDataDictionary(context, Mock.Of<ITempDataProvider>()) {["Information"] = ""};
-            var mockContext = new Mock<IdentityContext>(new DbContextOptions<IdentityContext>());
-            var mockUserStore = new Mock<UserStore<User>>(mockContext.Object, null);
-            var mockUserManager =
-                new Mock<UserManager<User>>(mockUserStore.Object, null, null, null, null, null, null, null, null);
-            
-            mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
-            mockUserManager.Setup(x => x.ConfirmEmailAsync(It.IsAny<User>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Failed());
-            
-            var accountController = new AccountController(mockUserManager.Object, null, null,
+
+            _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
+            _mockUserManager.Setup(x => x.ConfirmEmailAsync(It.IsAny<User>(), It.IsAny<string>()))
+                .ReturnsAsync(IdentityResult.Failed());
+
+            var accountController = new AccountController(_mockUserManager.Object, null, null,
                 null, null) {TempData = mockTempData};
 
             //Act
             var response = accountController.ConfirmEmail(user.Id, testCode).Result;
-            
+
             //Assert
             var result = Assert.IsType<RedirectToActionResult>(response);
-            mockUserManager.Verify(x => x.FindByIdAsync(user.Id), Times.Once);
-            mockUserManager.Verify(x => x.ConfirmEmailAsync(user, testCode), Times.Once);
+            _mockUserManager.Verify(x => x.FindByIdAsync(user.Id), Times.Once);
+            _mockUserManager.Verify(x => x.ConfirmEmailAsync(user, testCode), Times.Once);
             Assert.Contains(nameof(accountController.Register), result.ActionName);
             Assert.Equal("Something went wrong.", accountController.TempData["Error"]);
         }
@@ -259,24 +255,23 @@ namespace FishJournalTest.Controllers
         [Fact]
         public void ShouldLogout()
         {
-            var mockWrappers = new Mock<IAccountControllerWrappers>();
-            var mockLogger = new Mock<ILogger<AccountController>>();
-            
-            mockWrappers.Setup(x => x.SignOutAsync(It.IsAny<HttpContext>())).Returns(Task.FromResult(""));
+            Setup();
 
-            var accountController = new AccountController(null, null, mockLogger.Object,
-                null, null) {Wrappers = mockWrappers.Object};
+            _mockSignInManager.Setup(x => x.SignOutAsync()).Returns(Task.FromResult(""));
+
+            var accountController = new AccountController(null, _mockSignInManager.Object, _mockLogger.Object,
+                null, null);
 
             //Act
             var response = accountController.Logout().Result;
-            
+
             //Assert
             var result = Assert.IsType<RedirectToActionResult>(response);
-            mockWrappers.Verify(x => x.SignOutAsync(It.IsAny<HttpContext>()), Times.Once);
+            _mockSignInManager.Verify(x => x.SignOutAsync(), Times.Once);
             Assert.Contains("Home", result.ControllerName);
             Assert.Contains(nameof(HomeController.Index), result.ActionName);
         }
-        
+
         [Fact]
         public void ShouldRenderForgotPassword()
         {
@@ -288,6 +283,47 @@ namespace FishJournalTest.Controllers
 
             //Assert
             Assert.NotNull(response);
+        }
+
+        [Fact]
+        public void ForgotPasswordShouldFailWhenUserIsNotFound()
+        {
+            //Arrange
+            Setup();
+
+            var forgotPasswordViewModel = new ForgotPasswordViewModel
+            {
+                Email = "test@test.com"
+            };
+            var context = new DefaultHttpContext();
+            var mockTempData = new TempDataDictionary(context, Mock.Of<ITempDataProvider>()) {["Error"] = ""};
+
+            _mockUserManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>())).Returns(Task.FromResult<User>(null));
+
+            var accountController = new AccountController(_mockUserManager.Object, null, null,
+                null, null) {TempData = mockTempData};
+
+            //Act
+            var response = accountController.ForgotPassword(forgotPasswordViewModel).Result;
+
+            //Assert
+            var result = Assert.IsType<RedirectToActionResult>(response);
+            _mockUserManager.Verify(x => x.FindByEmailAsync(forgotPasswordViewModel.Email), Times.Once);
+            Assert.Contains(nameof(accountController.Register), result.ActionName);
+            Assert.Equal("No user with that email address found.", accountController.TempData["Error"]);
+        }
+
+        private void Setup()
+        {
+            _mockContext = new Mock<IdentityContext>(new DbContextOptions<IdentityContext>());
+            _mockUserStore = new Mock<UserStore<User>>(_mockContext.Object, null);
+            _mockUserManager =
+                new Mock<UserManager<User>>(_mockUserStore.Object, null, null, null, null, null, null, null, null);
+            _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
+            _mockUserClaimsPrincipalFactory = new Mock<IUserClaimsPrincipalFactory<User>>();
+            _mockSignInManager = new Mock<SignInManager<User>>(_mockUserManager.Object,
+                _mockHttpContextAccessor.Object, _mockUserClaimsPrincipalFactory.Object, null, null, null, null);
+            _mockLogger = new Mock<ILogger<AccountController>>();
         }
     }
 }

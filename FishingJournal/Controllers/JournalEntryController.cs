@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using FishingJournal.Data;
 using FishingJournal.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FishingJournal.Controllers
 {
@@ -56,7 +53,9 @@ namespace FishingJournal.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Notes,Latitude,Longitude,LocationOverride,WeatherSummary,Date")] JournalEntry journalEntry)
+        public async Task<IActionResult> Create(
+            [Bind("Id,Notes,Latitude,Longitude,LocationOverride,WeatherSummary,Date")]
+            JournalEntry journalEntry)
         {
             if (ModelState.IsValid)
             {
@@ -64,6 +63,7 @@ namespace FishingJournal.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(journalEntry);
         }
 
@@ -80,6 +80,7 @@ namespace FishingJournal.Controllers
             {
                 return NotFound();
             }
+
             return View(journalEntry);
         }
 
@@ -88,7 +89,8 @@ namespace FishingJournal.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Notes,Latitude,Longitude,WeatherSummary,Date")] JournalEntry journalEntry)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Notes,Latitude,Longitude,WeatherSummary,Date")]
+            JournalEntry journalEntry)
         {
             if (id != journalEntry.Id)
             {
@@ -113,8 +115,10 @@ namespace FishingJournal.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(journalEntry);
         }
 
