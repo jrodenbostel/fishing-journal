@@ -43,7 +43,6 @@ The purpose of this project is to serve as a home for learning and experimenting
 * .NET Core SDK and .NET Core Runtime (instructions: https://docs.microsoft.com/en-us/dotnet/core/install/linux-package-manager-ubuntu-1910)
 * Entity Framework: `dotnet tool install --global dotnet-ef`
 * SQL Server (instructions: https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-ubuntu?view=sql-server-ver15)  
-  * Password: `MS-sqlserver`
   * As the instructions say, verify that the server is running by executing `systemctl status mssql-server --no-pager` after installation. You should get output similar to this (timestamp and PID will vary):
   ```bash
   ● mssql-server.service - Microsoft SQL Server Database Engine
