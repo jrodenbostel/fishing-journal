@@ -1,4 +1,11 @@
 {
+  "Comments": [
+    "**** These comments are ignored, feel free to keep them or delete them ****",
+    "ConnectionStrings depend on your database, driver, and possibly other things",
+    "This sample app uses SQLServer; replacing that with SQLite is possible but non-trivial",
+    "Here is an example of a ConnectionString for a locally running SQLServer:",
+    "Example: \"DefaultConnection\": \"Server=localhost;Database=fishingjournal;User Id=SA;Password=Password1;\""
+  ],
   "Logging": {
     "LogLevel": {
       "Default": "Information",
