@@ -1,4 +1,5 @@
 import Vue from 'vue/dist/vue';
+import axios from 'axios/dist/axios';
 
 Vue.component('journal-entry', {
     props: {
@@ -8,6 +9,11 @@ Vue.component('journal-entry', {
         weatherSummaryValue: String,
         dateValue: String,
         notesValue: String
+    },
+    computed: {
+        latAndLong() {
+            return this.fields.Latitude.value ? `Lat: ${this.fields.Latitude.value}, Long: ${this.fields.Longitude.value}` : null;      
+        }
     },
     data() {
         return {
@@ -19,7 +25,8 @@ Vue.component('journal-entry', {
                 Date: { value: this.dateValue, error: null },
                 Notes: { value: this.notesValue, error: null },
             },
-            retrieving: false
+            retrievingLocation: false,
+            retrievingWeather: false
         }
     },
     methods:{
@@ -43,14 +50,34 @@ Vue.component('journal-entry', {
             return true;
         },
         getLocation() {
-            this.retrieving = true;
+            this.retrievingLocation = true;
             navigator.geolocation.getCurrentPosition((x) => {
                 let lat = x.coords.latitude;
                 let long = x.coords.longitude;
                 this.fields.Latitude.value = lat;
                 this.fields.Longitude.value = long;
-                this.retrieving = false;
+                this.retrievingLocation = false;
             });
+        },
+        getWeather() {
+            this.retrievingWeather = true;
+            let nearestStationId = '';
+            axios.get(`https://api.meteostat.net/v1/stations/nearby?lat=${this.fields.Latitude.value}&lon=${this.fields.Longitude.value}&limit=1&key=1SOl29tZ`)
+                .then(response => {
+                    nearestStationId = response.data.data[0].id;
+                    let today = new Date().toISOString().split('T')[0];
+                    axios.get(`https://api.meteostat.net/v1/history/hourly?station=${nearestStationId}&start=${today}&end=${today}&key=1SOl29tZ`).then(response => {
+                        const length = response.data.data.length-1;
+                        this.fields.WeatherSummary.value = `Temperature: ${(response.data.data[length].temperature)* 9 / 5 + 32}F \n` +
+                        `Humidity: ${(response.data.data[length].humidity)}% \n` +
+                        `Precipitation: ${(response.data.data[length].precipitation) / 25.4} inches \n` +
+                        `Barometric Pressure: ${(response.data.data[length].pressure)} hPa \n` +
+                        `Wind Speed: ${(response.data.data[length].windspeed)/1.609} mph \n` +
+                        `Wind Direction: ${(response.data.data[length].winddirection)} degrees \n`;
+                        
+                        this.retrievingWeather = false;
+                    });
+                });
         }
     }
 });

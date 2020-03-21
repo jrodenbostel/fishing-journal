@@ -217,9 +217,15 @@ namespace FishingJournal.Controllers
         {
             var user = await _userManager.FindByIdAsync(userId);
 
-            var viewModel = new ResetPasswordViewModel {Email = user.Email, Code = code};
+            if (user != null)
+            {
+                var viewModel = new ResetPasswordViewModel {Email = user.Email, Code = code};
 
-            return View(viewModel);
+                return View(viewModel);    
+            }
+            
+            TempData["Error"] = "Invalid confirmation code.";
+            return RedirectToAction(nameof(Register));
         }
 
         [HttpPost]
@@ -230,9 +236,8 @@ namespace FishingJournal.Controllers
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user != null)
             {
-                var code = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
-
-                var emailResult = _emailSender.SendEmailAsync(model.Email, "Password reset notification",
+                await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
+                await _emailSender.SendEmailAsync(model.Email, "Password reset notification",
                     $"Your password has been reset successfully.");
                 TempData["Information"] = "Password reset successfully.";
                 return RedirectToAction(nameof(Login));

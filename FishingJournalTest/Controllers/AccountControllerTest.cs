@@ -357,6 +357,153 @@ namespace FishJournalTest.Controllers
             Assert.Contains(nameof(accountController.Login), result.ActionName);
             Assert.Equal("Password reset email sent.", accountController.TempData["Information"]);
         }
+        
+        [Fact]
+        public void GetResetPasswordWillFail()
+        {
+            //Arrange
+            Setup();
+
+            const string userId = "1234";
+            const string code = "4321";
+            const string email = "test@test.com";
+            
+            var user = new User
+            {
+                Id = userId,
+                Email = email
+            };
+            
+            var context = new DefaultHttpContext();
+            var mockTempData = new TempDataDictionary(context, Mock.Of<ITempDataProvider>()) {["Error"] = ""};
+            _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>())).Returns(Task.FromResult<User>(null));
+
+            var accountController = new AccountController(_mockUserManager.Object, null, null, null, null)
+            {
+                TempData = mockTempData
+            };
+
+            //Act
+            var response = accountController.ResetPassword(userId, code).Result;
+            
+            //Assert
+            var result = Assert.IsType<RedirectToActionResult>(response);
+            _mockUserManager.Verify(x => x.FindByIdAsync(userId), Times.Once);
+            Assert.Contains(nameof(accountController.Register), result.ActionName);
+            Assert.Equal("Invalid confirmation code.", accountController.TempData["Error"]);
+        }
+
+        [Fact]
+        public void GetResetPasswordWillSucceed()
+        {
+            //Arrange
+            Setup();
+
+            const string userId = "1234";
+            const string code = "4321";
+            const string email = "test@test.com";
+            
+            var user = new User
+            {
+                Id = userId,
+                Email = email
+            };
+            
+            _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
+
+            var accountController = new AccountController(_mockUserManager.Object, null, null, null, null);
+
+            //Act
+            var response = accountController.ResetPassword(userId, code).Result;
+            
+            //Assert
+            var result = Assert.IsType<ViewResult>(response);
+            _mockUserManager.Verify(x => x.FindByIdAsync(userId), Times.Once);
+            Assert.Equal(email, ((ResetPasswordViewModel) result.Model).Email);
+        }
+
+        [Fact]
+        public void PostResetPasswordFails()
+        {
+            //Arrange
+            Setup();
+
+            const string code = "1234";
+            const string email = "test@test.com";
+            const string password = "password";
+
+            var resetPasswordViewModel = new ResetPasswordViewModel
+            {
+                Code = code,
+                Email = email,
+                Password = password
+            };
+
+            var context = new DefaultHttpContext();
+            var mockTempData = new TempDataDictionary(context, Mock.Of<ITempDataProvider>()) {["Error"] = ""};
+            _mockUserManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>())).Returns(Task.FromResult<User>(null));
+            
+            var accountController = new AccountController(_mockUserManager.Object, null, null, null, null)
+            {
+                TempData = mockTempData
+            };
+
+            //Act
+            var response = accountController.ResetPassword(resetPasswordViewModel).Result;
+            
+            //Assert
+            var result = Assert.IsType<RedirectToActionResult>(response);
+            _mockUserManager.Verify(x => x.FindByEmailAsync(email), Times.Once);
+            Assert.Contains(nameof(accountController.Register), result.ActionName);
+            Assert.Equal("No user with that email address found.", accountController.TempData["Error"]);
+        }
+        
+        [Fact]
+        public void PostResetPasswordSuccess()
+        {
+            //Arrange
+            Setup();
+
+            const string code = "1234";
+            const string email = "test@test.com";
+            const string password = "password";
+
+            var resetPasswordViewModel = new ResetPasswordViewModel
+            {
+                Code = code,
+                Email = email,
+                Password = password
+            };
+
+            var user = new User
+            {
+                Email = email
+            };
+
+            var context = new DefaultHttpContext();
+            var mockTempData = new TempDataDictionary(context, Mock.Of<ITempDataProvider>()) {["Information"] = ""};
+            var mockEmailSender = new Mock<IEmailSender>();
+            
+            _mockUserManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(user);
+            _mockUserManager.Setup(x => x.ResetPasswordAsync(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<string>()));
+            mockEmailSender.Setup(x => x.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
+            
+            var accountController = new AccountController(_mockUserManager.Object, null, null, mockEmailSender.Object, null)
+            {
+                TempData = mockTempData
+            };
+
+            //Act
+            var response = accountController.ResetPassword(resetPasswordViewModel).Result;
+            
+            //Assert
+            var result = Assert.IsType<RedirectToActionResult>(response);
+            _mockUserManager.Verify(x => x.FindByEmailAsync(email), Times.Once);
+            _mockUserManager.Verify(x => x.ResetPasswordAsync(user, code, password), Times.Once);
+            mockEmailSender.Verify(x => x.SendEmailAsync(email, It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            Assert.Contains(nameof(accountController.Login), result.ActionName);
+            Assert.Equal("Password reset successfully.", accountController.TempData["Information"]);
+        }
 
         private void Setup()
         {

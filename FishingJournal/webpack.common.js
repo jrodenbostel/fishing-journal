@@ -6,7 +6,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
     entry: {
         layout: './Scripts/app.js',
-        journalEntryValidation: './Scripts/journalEntryValidation.js'
+        journalEntryUtilities: './Scripts/journalEntryUtilities.js'
     },
     output: {
         path: path.resolve(__dirname, 'wwwroot'),

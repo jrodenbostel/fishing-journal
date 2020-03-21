@@ -13,25 +13,41 @@
                     <input type="hidden" asp-for="Latitude" v-model="fields.Latitude.value"/>
                     <input type="hidden" asp-for="Longitude" v-model="fields.Longitude.value"/>
                     <div class="field">
-                        <label class="label" asp-for="LocationOverride"></label>
+                        <label class="label">GPS Coordinates</label>
                         <span v-if="fields.Latitude.value && fields.Longitude.value" class="help is-success">Location coordinates retrieved</span>
                         <div class="field is-grouped">
                             <div class="control is-expanded">
-                                <input v-bind:class="{ 'is-danger': fields.LocationOverride.error }" v-model="fields.LocationOverride.value" asp-for="LocationOverride" class="input">
+                                <input v-bind:value="latAndLong" class="input" disabled>
                             </div>
                             <p class="control">
-                                <a class="button is-info" v-on:click="getLocation" v-bind:class="{ 'is-loading' : retrieving }" v-bind:disabled="retrieving">
+                                <a class="button is-info" v-on:click="getLocation" v-bind:class="{ 'is-loading' : retrievingLocation }" v-bind:disabled="retrievingLocation">
                                     <i class="fas fa-crosshairs"></i>
                                 </a>
                             </p>
+                        </div>
+                        <span class="help is-danger">{{fields.Latitude.error}}</span>
+                        <span class="help is-danger">{{fields.Longitude.error}}</span>
+                    </div>
+                    <div class="field">
+                        <label class="label" asp-for="LocationOverride"></label>
+                        <div class="control">
+                            <input v-bind:class="{ 'is-danger': fields.LocationOverride.error }" v-model="fields.LocationOverride.value" asp-for="LocationOverride" class="input">
                         </div>
                         <span class="help is-danger">{{fields.LocationOverride.error}}</span>
                         <span asp-validation-for="LocationOverride" class="help is-danger"></span>
                     </div>
                     <div class="field">
                         <label class="label" asp-for="WeatherSummary"></label>
-                        <div class="control">
-                            <input v-bind:class="{ 'is-danger': fields.WeatherSummary.error }" v-model="fields.WeatherSummary.value" asp-for="WeatherSummary" class="input">
+                        <div class="field is-grouped">
+                            <div class="control is-expanded">
+                                <input type="hidden" asp-for="WeatherSummary" v-model="fields.WeatherSummary.value"/>
+                                <textarea rows="6" v-bind:class="{ 'is-danger': fields.WeatherSummary.error }" v-bind:value="fields.WeatherSummary.value" class="textarea" disabled></textarea>
+                            </div>
+                            <p class="control">
+                                <a class="button is-info" v-on:click="getWeather" v-bind:class="{ 'is-loading' : retrievingWeather }" v-bind:disabled="(!fields.Latitude.value)">
+                                    <i class="fas fa-cloud-sun-rain"></i>
+                                </a>
+                            </p>
                         </div>
                         <span class="help is-danger">{{fields.WeatherSummary.error}}</span>
                         <span asp-validation-for="Notes" class="help is-danger"></span>
@@ -63,5 +79,5 @@
             </journal-entry>
         </section>
     </div>
-    <script src="~/js/journalEntryValidation.js" asp-append-version="true"></script>
+    <script src="~/js/journalEntryUtilities.js" asp-append-version="true"></script>
 </div>
