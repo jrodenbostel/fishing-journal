@@ -7,6 +7,8 @@ namespace FishingJournal.Models
     {
         public int Id { get; set; }
 
+        public string Email { get; set; }
+        
         [Required] public string Notes { get; set; }
 
         public string Latitude { get; set; }

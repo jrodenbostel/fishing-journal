@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FishingJournal.Data;
 using FishingJournal.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,10 +13,12 @@ namespace FishingJournal.Controllers
     public class JournalEntryController : Controller
     {
         private readonly DefaultContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public JournalEntryController(DefaultContext context)
+        public JournalEntryController(DefaultContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: JournalEntry
@@ -57,6 +60,8 @@ namespace FishingJournal.Controllers
             [Bind("Id,Notes,Latitude,Longitude,LocationOverride,WeatherSummary,Date")]
             JournalEntry journalEntry)
         {
+            var user = await _userManager.GetUserAsync(User);
+            journalEntry.Email = user.Email;
             if (ModelState.IsValid)
             {
                 _context.Add(journalEntry);

@@ -13,8 +13,7 @@
                     <input type="hidden" asp-for="Latitude" v-model="fields.Latitude.value"/>
                     <input type="hidden" asp-for="Longitude" v-model="fields.Longitude.value"/>
                     <div class="field">
-                        <label class="label">GPS Coordinates</label>
-                        <span v-if="fields.Latitude.value && fields.Longitude.value" class="help is-success">Location coordinates retrieved</span>
+                        <label class="label">Location Coordinates</label>
                         <div class="field is-grouped">
                             <div class="control is-expanded">
                                 <input v-bind:value="latAndLong" class="input" disabled>

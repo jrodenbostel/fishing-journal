@@ -1,8 +1,11 @@
 using System;
+using System.Security.Claims;
 using System.Threading;
 using FishingJournal.Controllers;
 using FishingJournal.Data;
 using FishingJournal.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -16,7 +19,7 @@ namespace FishJournalTest.Controllers
         public void CreatePageShouldRender()
         {
             //Arrange
-            var controller = new JournalEntryController(null);
+            var controller = new JournalEntryController(null, null);
 
             //Act
             var response = controller.Create();
@@ -38,13 +41,22 @@ namespace FishJournalTest.Controllers
                 Date = new DateTime(),
                 Notes = "caught lots of fish"
             };
+            var user = new User
+            {
+                Email = "test@test.com"
+            };
             var contextOptions = new DbContextOptions<DefaultContext>();
             var mockContext = new Mock<DefaultContext>(contextOptions);
+            var mockIdentityContext = new Mock<IdentityContext>(new DbContextOptions<IdentityContext>());
+            var mockUserStore = new Mock<UserStore<User>>(mockIdentityContext.Object, null);
+             var mockUserManager =
+                new Mock<UserManager<User>>(mockUserStore.Object, null, null, null, null, null, null, null, null);
 
+            mockUserManager.Setup(x => x.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(user);
             mockContext.Setup(x => x.Add(It.IsAny<JournalEntry>()));
             mockContext.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()));
 
-            var controller = new JournalEntryController(mockContext.Object);
+            var controller = new JournalEntryController(mockContext.Object, mockUserManager.Object);
 
             //Act
             var response = controller.Create(journalEntry).Result;
@@ -52,9 +64,10 @@ namespace FishJournalTest.Controllers
             //Assert
             Assert.NotNull(response);
             var viewResult = Assert.IsType<RedirectToActionResult>(response);
+            mockUserManager.Verify(x => x.GetUserAsync(It.IsAny<ClaimsPrincipal>()), Times.Once);
+            mockContext.Verify(x => x.Add(journalEntry), Times.Once);
+            mockContext.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
             Assert.Equal("Index", viewResult.ActionName);
-            mockContext.Verify(x => x.Add(journalEntry));
-            mockContext.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()));
         }
     }
 }
