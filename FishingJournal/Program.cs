@@ -1,5 +1,4 @@
 using System;
-using FishingJournal.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -19,7 +18,7 @@ namespace FishingJournal
 
                 try
                 {
-                    SeedData.Initialize(serviceProvider);
+                    //SeedData.Initialize(serviceProvider);
                 }
                 catch (Exception ex)
                 {
