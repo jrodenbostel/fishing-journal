@@ -64,7 +64,7 @@ The purpose of this project is to serve as a home for learning and experimenting
 1. git clone <project url>
 2. `cd fishing-journal` (move into solution folder)
 3. `cd FishingJournal` (move into project folder)
-4. `dotnet add package Microsoft.EntityFrameworkCore.Sqlite` (Install Entity Framework Core)
+4. `dotnet add package Microsoft.EntityFrameworkCore.sqlserver` (Install Entity Framework Core)
 4. `cp appsettings.json.example appsettings.json`
 
 ## References
