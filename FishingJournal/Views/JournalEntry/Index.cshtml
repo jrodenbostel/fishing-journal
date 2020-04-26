@@ -1,7 +1,8 @@
 @model IEnumerable<JournalEntry>
 
 @{
-    Layout = null;
+    ViewBag.Title = "List an Entry";
+    Layout = "_Layout";
 }
 
 <!DOCTYPE html>
@@ -56,9 +57,7 @@
                 @Html.DisplayFor(modelItem => item.Date)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>  <a asp-action="Details" asp-route-id="@item.Id">View</a> <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
     }

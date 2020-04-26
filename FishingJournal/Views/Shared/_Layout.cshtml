@@ -25,6 +25,9 @@
             </div>
             <div id="menuBar" v-bind:class="{ 'is-active': burgerActive }" class="navbar-menu">
                 <div class="navbar-start">
+                    <a class="navbar-item" asp-controller="JournalEntry" asp-action="Index">
+                        List Journal
+                    </a>
                     <a class="navbar-item" asp-controller="JournalEntry" asp-action="Create">
                         Create Entry
                     </a>
