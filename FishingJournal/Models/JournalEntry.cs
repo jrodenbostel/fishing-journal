@@ -7,6 +7,8 @@ namespace FishingJournal.Models
     {
         public int Id { get; set; }
 
+        public string Email { get; set; }
+        
         [Required] public string Notes { get; set; }
 
         public string Latitude { get; set; }
@@ -16,10 +18,24 @@ namespace FishingJournal.Models
         [Display(Name = "Location")]
         [Required]
         public string LocationOverride { get; set; }
-
-        [Display(Name = "Weather Summary")]
+        
         [Required]
-        public string WeatherSummary { get; set; }
+        public string Precipitation { get; set; }
+        
+        [Required]
+        public string Temperature { get; set; }
+        
+        [Required]
+        public string Humidity { get; set; }
+        
+        [Required]
+        public string BarometricPressure { get; set; }
+        
+        [Required]
+        public string WindSpeed { get; set; }
+        
+        [Required]
+        public string WindDirection { get; set; }
 
         [DataType(DataType.Date)] public DateTime Date { get; set; }
     }

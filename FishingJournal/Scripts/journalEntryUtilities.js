@@ -22,6 +22,12 @@ Vue.component('journal-entry', {
                 Longitude: { value: this.longValue, error: null },
                 LocationOverride: { displayName: 'Location', value: this.locationOverride, error: null },
                 WeatherSummary: { displayName: 'Weather Summary', value: this.weatherSummaryValue, error: null },
+                Temperature: { value: '', error: null },
+                Humidity: { value: '', error: null },
+                Precipitation: { value: '', error: null },
+                BarometricPressure: { value: '', error: null },
+                WindSpeed: { value: '', error: null },
+                WindDirection: { value: '', error: null },
                 Date: { value: this.dateValue, error: null },
                 Notes: { value: this.notesValue, error: null },
             },
@@ -68,13 +74,24 @@ Vue.component('journal-entry', {
                     let today = new Date().toISOString().split('T')[0];
                     axios.get(`https://api.meteostat.net/v1/history/hourly?station=${nearestStationId}&start=${today}&end=${today}&key=1SOl29tZ`).then(response => {
                         const length = response.data.data.length-1;
-                        this.fields.WeatherSummary.value = `Temperature: ${(response.data.data[length].temperature)* 9 / 5 + 32}F \n` +
-                        `Humidity: ${(response.data.data[length].humidity)}% \n` +
-                        `Precipitation: ${(response.data.data[length].precipitation) / 25.4} inches \n` +
-                        `Barometric Pressure: ${(response.data.data[length].pressure)} hPa \n` +
-                        `Wind Speed: ${(response.data.data[length].windspeed)/1.609} mph \n` +
-                        `Wind Direction: ${(response.data.data[length].winddirection)} degrees \n`;
-                        
+                        const temperature = response.data.data[length].temperature * 9 / 5 + 32;
+                        const humidity = response.data.data[length].humidity;
+                        const precipitation = response.data.data[length].precipitation / 25.4;
+                        const barometricPressure = response.data.data[length].pressure ? response.data.data[length].pressure: 'UNAVAILABLE';
+                        const windspeed = response.data.data[length].windspeed;
+                        const windDirection = response.data.data[length].winddirection;
+                        this.fields.WeatherSummary.value = `Temperature: ${temperature}F \n` +
+                        `Humidity: ${humidity}% \n` +
+                        `Precipitation: ${precipitation} inches \n` +
+                        `Barometric Pressure: ${barometricPressure} hPa \n` +
+                        `Wind Speed: ${windspeed/1.609} mph \n` +
+                        `Wind Direction: ${windDirection} degrees \n`;
+                        this.fields.Temperature.value = `${temperature}`;
+                        this.fields.Humidity.value = `${humidity}`;
+                        this.fields.Precipitation.value = `${precipitation}`;
+                        this.fields.BarometricPressure.value = `${barometricPressure}`;
+                        this.fields.WindSpeed.value = `${windspeed}`;
+                        this.fields.WindDirection.value = `${windDirection}`;
                         this.retrievingWeather = false;
                     });
                 });

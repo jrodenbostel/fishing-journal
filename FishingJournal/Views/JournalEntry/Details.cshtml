@@ -1,10 +1,9 @@
 @model JournalEntry
-
-@{
-    ViewBag.Title = "Details of an Entry";
-    Layout = "_Layout";
-}
-
+ 
+ @{
+     ViewBag.Title = "Entry";
+     Layout = "_Layout";
+ }
 <!DOCTYPE html>
 
 <html>
@@ -35,12 +34,6 @@
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Longitude)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.WeatherSummary)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.WeatherSummary)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Date)

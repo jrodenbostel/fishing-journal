@@ -3,8 +3,10 @@ using System.Threading.Tasks;
 using FishingJournal.Data;
 using FishingJournal.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace FishingJournal.Controllers
 {
@@ -12,16 +14,21 @@ namespace FishingJournal.Controllers
     public class JournalEntryController : Controller
     {
         private readonly DefaultContext _context;
+        private readonly UserManager<User> _userManager;
+        private readonly IConfiguration _configuration; 
 
-        public JournalEntryController(DefaultContext context)
+        public JournalEntryController(DefaultContext context, UserManager<User> userManager, IConfiguration configuration)
         {
             _context = context;
+            _userManager = userManager;
+            _configuration = configuration;
         }
 
         // GET: JournalEntry
         public async Task<IActionResult> Index()
         {
-            return View(await _context.JournalEntries.ToListAsync());
+            ViewData["MapboxKey"] = _configuration.GetValue<string>("MapboxKey");
+            return View(await _context.JournalEntries.OrderByDescending(item => item.Date).ToListAsync());
         }
 
         // GET: JournalEntry/Details/5
@@ -54,9 +61,11 @@ namespace FishingJournal.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("Id,Notes,Latitude,Longitude,LocationOverride,WeatherSummary,Date")]
+            [Bind("Id,Notes,Latitude,Longitude,LocationOverride,Precipitation,Temperature,Humidity,BarometricPressure,WindSpeed,WindDirection,Date")]
             JournalEntry journalEntry)
         {
+            var user = await _userManager.GetUserAsync(User);
+            journalEntry.Email = user.Email;
             if (ModelState.IsValid)
             {
                 _context.Add(journalEntry);
@@ -89,7 +98,7 @@ namespace FishingJournal.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Notes,Latitude,Longitude,WeatherSummary,Date")]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Notes,Latitude,Longitude,LocationOverride,Precipitation,Temperature,Humidity,BarometricPressure,WindSpeed,WindDirection,Date")]
             JournalEntry journalEntry)
         {
             if (id != journalEntry.Id)
