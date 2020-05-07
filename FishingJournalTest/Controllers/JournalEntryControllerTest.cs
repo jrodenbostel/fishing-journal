@@ -19,7 +19,7 @@ namespace FishJournalTest.Controllers
         public void CreatePageShouldRender()
         {
             //Arrange
-            var controller = new JournalEntryController(null, null);
+            var controller = new JournalEntryController(null, null, null);
 
             //Act
             var response = controller.Create();
@@ -37,7 +37,12 @@ namespace FishJournalTest.Controllers
                 Latitude = "12",
                 Longitude = "-12",
                 LocationOverride = "Geneva",
-                WeatherSummary = "Sunny",
+                Temperature = "Sunny",
+                Precipitation = "18",
+                BarometricPressure = "21",
+                Humidity = "19",
+                WindSpeed = "32",
+                WindDirection = "15",
                 Date = new DateTime(),
                 Notes = "caught lots of fish"
             };
@@ -56,7 +61,7 @@ namespace FishJournalTest.Controllers
             mockContext.Setup(x => x.Add(It.IsAny<JournalEntry>()));
             mockContext.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()));
 
-            var controller = new JournalEntryController(mockContext.Object, mockUserManager.Object);
+            var controller = new JournalEntryController(mockContext.Object, mockUserManager.Object, null);
 
             //Act
             var response = controller.Create(journalEntry).Result;
