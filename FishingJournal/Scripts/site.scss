@@ -43,6 +43,15 @@ h1, h2, h3, h4 {
   .navbar-item {
     color: beige;
   }
+  
+  .navbar-dropdown {
+    .navbar-item {
+      color: black;
+    }
+    a {
+      color: black;
+    }
+  }
 
   a {
     color: beige;

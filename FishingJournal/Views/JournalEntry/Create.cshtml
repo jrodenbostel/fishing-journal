@@ -5,78 +5,85 @@
     Layout = "_Layout";
 }
 <div class="container">
-    <div class="column is-half">
-        <section id="root">
-            <journal-entry inline-template>
-                <form v-on:submit="checkForm" asp-action="Create">
-                    <div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
-                    <input type="hidden" asp-for="Latitude" v-model="fields.Latitude.value"/>
-                    <input type="hidden" asp-for="Longitude" v-model="fields.Longitude.value"/>
-                    <div class="field">
-                        <label class="label">Location Coordinates</label>
-                        <div class="field is-grouped">
-                            <div class="control is-expanded">
-                                <input v-bind:value="latAndLong" class="input" disabled>
+    <div class="columns">
+        <div class="column is-half">
+            <section id="root">
+                <journal-entry inline-template>
+                    <form v-on:submit="checkForm" asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
+                        <input type="hidden" asp-for="Latitude" v-model="fields.Latitude.value"/>
+                        <input type="hidden" asp-for="Longitude" v-model="fields.Longitude.value"/>
+                        <input type="hidden" asp-for="Temperature" v-model="fields.Temperature.value"/>
+                        <input type="hidden" asp-for="Precipitation" v-model="fields.Precipitation.value"/>
+                        <input type="hidden" asp-for="Humidity" v-model="fields.Humidity.value"/>
+                        <input type="hidden" asp-for="BarometricPressure" v-model="fields.BarometricPressure.value"/>
+                        <input type="hidden" asp-for="WindSpeed" v-model="fields.WindSpeed.value"/>
+                        <input type="hidden" asp-for="WindDirection" v-model="fields.WindDirection.value"/>
+                        <div class="field">
+                            <label class="label">Location Coordinates</label>
+                            <div class="field is-grouped">
+                                <div class="control is-expanded">
+                                    <input v-bind:value="latAndLong" class="input" disabled>
+                                </div>
+                                <p class="control">
+                                    <a class="button is-info" v-on:click="getLocation" v-bind:class="{ 'is-loading' : retrievingLocation }" v-bind:disabled="retrievingLocation">
+                                        <i class="fas fa-crosshairs"></i>
+                                    </a>
+                                </p>
                             </div>
-                            <p class="control">
-                                <a class="button is-info" v-on:click="getLocation" v-bind:class="{ 'is-loading' : retrievingLocation }" v-bind:disabled="retrievingLocation">
-                                    <i class="fas fa-crosshairs"></i>
-                                </a>
-                            </p>
+                            <span class="help is-danger">{{fields.Latitude.error}}</span>
+                            <span class="help is-danger">{{fields.Longitude.error}}</span>
                         </div>
-                        <span class="help is-danger">{{fields.Latitude.error}}</span>
-                        <span class="help is-danger">{{fields.Longitude.error}}</span>
-                    </div>
-                    <div class="field">
-                        <label class="label" asp-for="LocationOverride"></label>
-                        <div class="control">
-                            <input v-bind:class="{ 'is-danger': fields.LocationOverride.error }" v-model="fields.LocationOverride.value" asp-for="LocationOverride" class="input">
-                        </div>
-                        <span class="help is-danger">{{fields.LocationOverride.error}}</span>
-                        <span asp-validation-for="LocationOverride" class="help is-danger"></span>
-                    </div>
-                    <div class="field">
-                        <label class="label" asp-for="WeatherSummary"></label>
-                        <div class="field is-grouped">
-                            <div class="control is-expanded">
-                                <input type="hidden" asp-for="WeatherSummary" v-model="fields.WeatherSummary.value"/>
-                                <textarea rows="6" v-bind:class="{ 'is-danger': fields.WeatherSummary.error }" v-bind:value="fields.WeatherSummary.value" class="textarea" disabled></textarea>
+                        <div class="field">
+                            <label class="label" asp-for="LocationOverride"></label>
+                            <div class="control">
+                                <input v-bind:class="{ 'is-danger': fields.LocationOverride.error }" v-model="fields.LocationOverride.value" asp-for="LocationOverride" class="input">
                             </div>
-                            <p class="control">
-                                <a class="button is-info" v-on:click="getWeather" v-bind:class="{ 'is-loading' : retrievingWeather }" v-bind:disabled="(!fields.Latitude.value)">
-                                    <i class="fas fa-cloud-sun-rain"></i>
-                                </a>
-                            </p>
+                            <span class="help is-danger">{{fields.LocationOverride.error}}</span>
+                            <span asp-validation-for="LocationOverride" class="help is-danger"></span>
                         </div>
-                        <span class="help is-danger">{{fields.WeatherSummary.error}}</span>
-                        <span asp-validation-for="Notes" class="help is-danger"></span>
-                    </div>
-                    <div class="field">
-                        <label class="label" asp-for="Date"></label>
-                        <div class="control">
-                            <input v-on:keyup="checkForm" v-bind:class="{ 'is-danger': fields.Date.error }" v-model="fields.Date.value" asp-for="Date" class="input">
+                        <div class="field">
+                            <label class="label">Weather</label>
+                            <div class="field is-grouped">
+                                <div class="control is-expanded">
+                                    <textarea rows="6" v-bind:class="{ 'is-danger': fields.WeatherSummary.error }" v-bind:value="fields.WeatherSummary.value" class="textarea" disabled></textarea>
+                                </div>
+                                <p class="control">
+                                    <a class="button is-info" v-on:click="getWeather" v-bind:class="{ 'is-loading' : retrievingWeather }" v-bind:disabled="(!fields.Latitude.value)">
+                                        <i class="fas fa-cloud-sun-rain"></i>
+                                    </a>
+                                </p>
+                            </div>
+                            <span class="help is-danger">{{fields.WeatherSummary.error}}</span>
+                            <span asp-validation-for="Notes" class="help is-danger"></span>
                         </div>
-                        <span class="help is-danger">{{fields.Date.error}}</span>
-                        <span asp-validation-for="Date" class="help is-danger"></span>
-                    </div>
-                    <div class="field">
-                        <label class="label" asp-for="Notes"></label>
-                        <div class="control">
-                            <textarea rows="10" v-bind:class="{ 'is-danger': fields.Notes.error }" v-model="fields.Notes.value" asp-for="Notes" class="textarea"></textarea>
+                        <div class="field">
+                            <label class="label" asp-for="Date"></label>
+                            <div class="control">
+                                <input v-on:keyup="checkForm" v-bind:class="{ 'is-danger': fields.Date.error }" v-model="fields.Date.value" asp-for="Date" class="input">
+                            </div>
+                            <span class="help is-danger">{{fields.Date.error}}</span>
+                            <span asp-validation-for="Date" class="help is-danger"></span>
                         </div>
-                        <span class="help is-danger">{{fields.Notes.error}}</span>
-                        <span asp-validation-for="Notes" class="help is-danger"></span>
-                    </div>
-
-                    <div class="field is-grouped">
-                        <div class="control">
-                            <button class="button is-primary">Save</button>
-                            <a class="button is-link is-light" asp-action="Index">Cancel</a>
+                        <div class="field">
+                            <label class="label" asp-for="Notes"></label>
+                            <div class="control">
+                                <textarea rows="10" v-bind:class="{ 'is-danger': fields.Notes.error }" v-model="fields.Notes.value" asp-for="Notes" class="textarea"></textarea>
+                            </div>
+                            <span class="help is-danger">{{fields.Notes.error}}</span>
+                            <span asp-validation-for="Notes" class="help is-danger"></span>
                         </div>
-                    </div>
-                </form>
-            </journal-entry>
-        </section>
+    
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <button class="button is-primary">Save</button>
+                                <a class="button is-link is-light" asp-action="Index">Cancel</a>
+                            </div>
+                        </div>
+                    </form>
+                </journal-entry>
+            </section>
+        </div>
     </div>
     <script src="~/js/journalEntryUtilities.js" asp-append-version="true"></script>
 </div>

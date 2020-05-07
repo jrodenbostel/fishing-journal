@@ -4,66 +4,34 @@
     ViewBag.Title = "Entries";
     Layout = "_Layout";
 }
-
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width"/>
-    <title>Index</title>
-</head>
-<body>
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Notes)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Latitude)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Longitude)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.WeatherSummary)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Date)
-        </th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
+<div class="container">
+<div class="buttons">
+  <a class="button is-primary" asp-controller="JournalEntry" asp-action="Create">New Entry</a>
+</div>
+<div class="columns is-multiline is-desktop">        
     @foreach (var item in Model)
     {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Notes)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Latitude)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Longitude)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.WeatherSummary)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+        <div class="column is-4">
+        <div class="card">
+            <p class="card-header-title">
+              @Html.DisplayFor(modelItem => item.LocationOverride)
+            </p>
+            <div class="card-image">
+                <figure class="image is-4by3">
+                    <img src="https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/static/@item.Longitude,@item.Latitude,16,0/600x450?access_token=@ViewData["MapboxKey"]" alt="Placeholder image">
+                </figure>
+            </div>
+            <div class="card-content">                
+                <div class="content">
+                    <p class="title is-6">@Html.DisplayFor(modelItem => item.Date)</p>
+                    <p>@Html.DisplayFor(modelItem => item.Notes)</p>                    
+                </div>
+                <footer class="card-footer">
+                    <a class="card-footer-item" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                  </footer>
+            </div>            
+        </div>
+        </div>
     }
-    </tbody>
-</table>
-</body>
-</html>
+</div>
+</div>

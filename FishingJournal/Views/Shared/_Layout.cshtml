@@ -24,9 +24,9 @@
                 </a>
             </div>
             <div id="menuBar" v-bind:class="{ 'is-active': burgerActive }" class="navbar-menu">
-                <div class="navbar-start">
-                    <a class="navbar-item" asp-controller="JournalEntry" asp-action="Create">
-                        Create Entry
+                <div class="navbar-start">                    
+                    <a class="navbar-item" asp-controller="JournalEntry" asp-action="Index">
+                        Entries
                     </a>
                 </div>
                 @await Html.PartialAsync("_LoginPartial")
@@ -36,14 +36,17 @@
 </header>
 <section id="main">
     <div class="container">
-        <div class="column is-10 is-offset-1">
-            <h1 class="title is-1">@ViewData["Title"]</h1>
-            <h3 class="title is-3 has-text-info">@ViewData["Information"]</h3>
-            <h3 class="title is-3 has-text-danger">@ViewData["Error"]</h3>
-            <h3 class="title is-3 has-text-info">@TempData["Information"]</h3>
-            <h3 class="title is-3 has-text-danger">@TempData["Error"]</h3>
-            @RenderBody()
+        <div class="columns">
+            <div class="column is-10 is-offset-1">
+                <h1 class="title is-1">@ViewData["Title"]</h1>
+                <h3 class="title is-3 has-text-info">@ViewData["Information"]</h3>
+                <h3 class="title is-3 has-text-danger">@ViewData["Error"]</h3>
+                <h3 class="title is-3 has-text-info">@TempData["Information"]</h3>
+                <h3 class="title is-3 has-text-danger">@TempData["Error"]</h3>
+                @RenderBody()
+            </div>
         </div>
+        
     </div>
 </section>
 
