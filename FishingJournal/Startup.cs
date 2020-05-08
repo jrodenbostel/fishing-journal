@@ -1,3 +1,4 @@
+using System;
 using FishingJournal.Data;
 using FishingJournal.Models;
 using FishingJournal.Services;
@@ -24,6 +25,8 @@ namespace FishingJournal
         // This method gets called by the runtime. Use this method to add services to the container.
         public virtual void ConfigureServices(IServiceCollection services)
         {
+            ConfigurationCheck();
+
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
             services.AddDbContext<DefaultContext>(options =>
@@ -76,6 +79,21 @@ namespace FishingJournal
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+        
+        private void ConfigurationCheck()
+        {
+            var sendGridKey = Configuration.GetValue<string>("SendGridKey");
+            if (string.IsNullOrEmpty(sendGridKey))
+            {
+                throw new SystemException("SendGrid key not found. Registration email confirmation will not be available.");
+            }
+
+            var mapBoxKey = Configuration.GetValue<string>("MapboxKey");
+            if (string.IsNullOrEmpty(sendGridKey))
+            {
+                throw new SystemException("Mapbox key not found. Location mapping will not be available.");
+            }
         }
     }
 }
