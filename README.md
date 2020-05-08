@@ -20,7 +20,8 @@ The purpose of this project is to serve as a home for learning and experimenting
 
 
 ## Notes
-* Sensitive files are excluded from version control.  Example files are checked in where appropriate.
+* Sensitive files are excluded from version control.  Example files are checked in where appropriate. 
+  * Of particular note are two external services: SendGrid and MapBox.  API keys are required for both in order for the application to function properly.
 * When setting up a test project that includes integration tests (integration tests including those that involve making requests to a temporary test server and that work against in-memory databases), the Project SDK must be set to "Microsoft.NET.Sdk.Web" in the test project's .csproj file. The default is "Microsoft.NET.Sdk".
 
 ## Appendix
