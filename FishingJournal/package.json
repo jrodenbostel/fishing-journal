@@ -1,8 +1,7 @@
 {
-  "name": "costume-inventory-test",
+  "name": "fishing-journal",
   "version": "1.0.0",
   "description": "",
-  "main": "webpack.config.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack --config webpack.dev.js --watch",

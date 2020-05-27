@@ -23,7 +23,7 @@ namespace FishJournalTest
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
-            const String connectionString = "DataSource=:memory:";
+            const string connectionString = "DataSource=:memory:";
             var connection = new SqliteConnection(connectionString);
             connection.Open();
 
