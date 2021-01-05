@@ -32,7 +32,7 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "typeface-national-park": "^1.0.1"
   }
 }
